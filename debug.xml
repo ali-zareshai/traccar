@@ -16,10 +16,17 @@
 
     <entry key='mail.debug'>true</entry>
 
-    <entry key='database.driver'>org.h2.Driver</entry>
-    <entry key='database.url'>jdbc:h2:./target/database</entry>
-    <entry key='database.user'>sa</entry>
-    <entry key='database.password'></entry>
+<!--    <entry key='database.driver'>org.h2.Driver</entry>-->
+<!--    <entry key='database.url'>jdbc:h2:./target/database</entry>-->
+<!--    <entry key='database.user'>sa</entry>-->
+<!--    <entry key='database.password'></entry>-->
+
+    <entry key='database.driver'>com.microsoft.sqlserver.jdbc.SQLServerDriver</entry>
+    <entry key='database.url'>jdbc:sqlserver://172.29.20.18:1433;user=admin;password=admin;databaseName=traccar;encrypt=true;trustServerCertificate=true;</entry>
+    <entry key='database.user'>admin</entry>
+    <entry key='database.password'>admin</entry>
+    
+    <entry key="query.insert_position">INSERT INTO "tc_positions" ("deviceid", "protocol", "devicetime", "fixtime", "valid","latitude", "longitude", "altitude", "speed", "course","attributes") VALUES (:deviceId, :protocol, :deviceTime, :fixTime, :valid, :latitude, :longitude, :altitude, :speed, :course, :attributes);</entry>
 
     <!--<entry key='server.instantAcknowledgement'>true</entry>
     <entry key='server.buffering.threshold'>5000</entry>-->

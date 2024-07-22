@@ -15,10 +15,8 @@
  */
 package org.traccar.storage;
 
-import org.traccar.model.BaseModel;
-import org.traccar.model.Pair;
-import org.traccar.model.Permission;
-import org.traccar.model.Server;
+import org.apache.poi.ss.formula.functions.T;
+import org.traccar.model.*;
 import org.traccar.storage.query.Condition;
 import org.traccar.storage.query.Request;
 
@@ -184,6 +182,11 @@ public class MemoryStorage extends Storage {
     public void removePermission(Permission permission) {
         getPermissionsSet(permission.getOwnerClass(), permission.getPropertyClass())
                 .remove(new Pair<>(permission.getOwnerId(), permission.getPropertyId()));
+    }
+
+    @Override
+    public void executeStoreProducer(Position entity, String query) {
+
     }
 
 }

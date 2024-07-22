@@ -15,9 +15,12 @@
  */
 package org.traccar.handler;
 
+import com.google.gson.Gson;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.traccar.config.Config;
+import org.traccar.config.Keys;
 import org.traccar.database.StatisticsManager;
 import org.traccar.model.Position;
 import org.traccar.storage.Storage;
@@ -30,11 +33,13 @@ public class DatabaseHandler extends BasePositionHandler {
 
     private final Storage storage;
     private final StatisticsManager statisticsManager;
+    private final Config config;
 
     @Inject
-    public DatabaseHandler(Storage storage, StatisticsManager statisticsManager) {
+    public DatabaseHandler(Storage storage, StatisticsManager statisticsManager,Config config) {
         this.storage = storage;
         this.statisticsManager = statisticsManager;
+        this.config =config;
     }
 
     @Override
@@ -42,6 +47,8 @@ public class DatabaseHandler extends BasePositionHandler {
 
         try {
             position.setId(storage.addObject(position, new Request(new Columns.Exclude("id"))));
+            String query =config.getString(Keys.INSERT_POSITION_QUERY);
+            storage.executeStoreProducer(position,query);
             statisticsManager.registerMessageStored(position.getDeviceId(), position.getProtocol());
         } catch (Exception error) {
             LOGGER.warn("Failed to store position", error);

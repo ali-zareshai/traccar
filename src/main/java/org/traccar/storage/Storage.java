@@ -15,8 +15,10 @@
  */
 package org.traccar.storage;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.traccar.model.BaseModel;
 import org.traccar.model.Permission;
+import org.traccar.model.Position;
 import org.traccar.storage.query.Request;
 
 import java.util.List;
@@ -38,6 +40,8 @@ public abstract class Storage {
     public abstract void addPermission(Permission permission) throws StorageException;
 
     public abstract void removePermission(Permission permission) throws StorageException;
+
+    public abstract void executeStoreProducer(Position entity, String query);
 
     public List<Permission> getPermissions(
             Class<? extends BaseModel> ownerClass,

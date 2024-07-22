@@ -16,12 +16,10 @@
 package org.traccar.storage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.poi.ss.formula.functions.T;
 import org.traccar.config.Config;
-import org.traccar.model.BaseModel;
-import org.traccar.model.Device;
-import org.traccar.model.Group;
-import org.traccar.model.GroupedModel;
-import org.traccar.model.Permission;
+import org.traccar.helper.Log;
+import org.traccar.model.*;
 import org.traccar.storage.query.Columns;
 import org.traccar.storage.query.Condition;
 import org.traccar.storage.query.Order;
@@ -29,12 +27,14 @@ import org.traccar.storage.query.Request;
 
 import jakarta.inject.Inject;
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.sql.Statement;
+import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class DatabaseStorage extends Storage {
@@ -90,6 +90,7 @@ public class DatabaseStorage extends Storage {
         query.append(formatColumns(columns, c -> ':' + c));
         query.append(")");
         try {
+//            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>"+getStorageName(entity.getClass())+"|||"+String.join(", ",columns));
             QueryBuilder builder = QueryBuilder.create(config, dataSource, objectMapper, query.toString(), true);
             builder.setObject(entity, columns);
             return builder.executeUpdate();
@@ -395,6 +396,34 @@ public class DatabaseStorage extends Storage {
         }
 
         return result.toString();
+    }
+
+    @Override
+    public void executeStoreProducer(Position entity, String query) {
+        try {
+            List<String> columns =extractParameters(query);
+            QueryBuilder builder = QueryBuilder.create(config, dataSource, objectMapper, query);
+            builder.setObject(entity,columns);
+            builder.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<String> extractParameters(String query) {
+        List<String> parameters = new ArrayList<>();
+
+        // Regular expression to find parameters in the format :parameterName
+        String regex = ":(\\w+)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(query);
+
+        // Add each parameter name to the list
+        while (matcher.find()) {
+            parameters.add(matcher.group(1));
+        }
+
+        return parameters;
     }
 
 }

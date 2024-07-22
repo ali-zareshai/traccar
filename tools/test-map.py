@@ -8,7 +8,7 @@ import random
 import json
 
 server = 'localhost:5055'
-baseUrl = 'http://localhost:8082'
+baseUrl = 'http://localhost:9090'
 user = { 'email' : 'admin', 'password' : 'admin' }
 devices = 500
 

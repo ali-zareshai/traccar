@@ -449,6 +449,13 @@ public final class Keys {
             List.of(KeyType.CONFIG));
 
     /**
+     * inert position store prodector
+     */
+    public static final ConfigKey<String> INSERT_POSITION_QUERY = new StringConfigKey(
+            "query.insert_position",
+            List.of(KeyType.CONFIG));
+
+    /**
      * Database connection URL. By default Traccar uses H2 database.
      */
     public static final ConfigKey<String> DATABASE_URL = new StringConfigKey(
