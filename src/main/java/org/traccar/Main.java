@@ -108,6 +108,7 @@ public final class Main {
                     break;
             }
         } else {
+            System.out.println(configFile);
             run(configFile);
         }
     }

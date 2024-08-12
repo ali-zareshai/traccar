@@ -6,7 +6,14 @@
     <entry key='web.debug'>true</entry>
     <entry key='web.console'>true</entry>
 
-    <entry key='geocoder.type'>pluscodes</entry>
+    <entry key='geocoder.enable'>true</entry>
+    <entry key='geocoder.type'>neshan</entry>
+    <entry key='geocoder.url'>https://api.neshan.org/v5</entry>
+    <entry key='geocoder.key'>service.a608c4409532401982f59974f722966a</entry>
+    <!-- <entry key='geocoder.key'>dc668eb9095940e8bf52aed745b97af5</entry> -->
+    <entry key='geocoder.reuseDistance'>500</entry>
+    <entry key='geocoder.ignorePositions'>false</entry>
+    <entry key='geocoder.processInvalidPositions'>true</entry>
 
     <entry key='media.path'>./target/media</entry>
 

@@ -23,10 +23,8 @@ import jakarta.json.JsonObject;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.InvocationCallback;
-import java.util.AbstractMap;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+
+import java.util.*;
 
 public abstract class JsonGeocoder implements Geocoder {
 
@@ -38,6 +36,8 @@ public abstract class JsonGeocoder implements Geocoder {
     private StatisticsManager statisticsManager;
 
     private Map<Map.Entry<Double, Double>, String> cache;
+
+    private Map<String,String> headers =new HashMap<>();
 
     public JsonGeocoder(Client client, String url, final int cacheSize, AddressFormat addressFormat) {
         this.client = client;
@@ -108,6 +108,11 @@ public abstract class JsonGeocoder implements Geocoder {
         }
 
         var request = client.target(String.format(url, latitude, longitude)).request();
+        if(!headers.isEmpty()){
+            headers.forEach((k,v)->{
+                request.header(k,v);
+            });
+        }
 
         if (callback != null) {
             request.async().get(new InvocationCallback<JsonObject>() {
@@ -129,6 +134,10 @@ public abstract class JsonGeocoder implements Geocoder {
             }
         }
         return null;
+    }
+
+    public void addNewHeader(String key,String value){
+        headers.put(key, value);
     }
 
     public abstract Address parseAddress(JsonObject json);
