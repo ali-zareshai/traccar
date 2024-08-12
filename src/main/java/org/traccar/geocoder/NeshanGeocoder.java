@@ -25,7 +25,7 @@ public class NeshanGeocoder extends JsonGeocoder{
         if(json.getString("status").equalsIgnoreCase("ok")){
             try {
                 address.setFormattedAddress(json.getString("county"));
-                address.setStreet(json.getString("route_type"));
+                address.setStreet(json.getString("route_name"));
 
                 address.setDistrict(json.getString("district"));
                 address.setState(json.getString("state"));
