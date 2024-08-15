@@ -20,24 +20,22 @@ public class NeshanGeocoder extends JsonGeocoder{
 
     @Override
     public Address parseAddress(JsonObject json) {
-        System.out.println(">>>>>>>>>>>>>>>>>"+json.toString()+"\n");
         Address address =new Address();
         if(json.getString("status").equalsIgnoreCase("ok")){
             try {
-                address.setFormattedAddress(json.getString("county"));
+                address.setFormattedAddress(json.getString("formatted_address"));
                 address.setStreet(json.getString("route_name"));
 
                 address.setDistrict(json.getString("district"));
                 address.setState(json.getString("state"));
 
                 address.setHouse(json.getString("neighbourhood"));
-                address.setCountry(json.getString("formatted_address"));
+                address.setCountry(json.getString("county"));
 
                 address.setPostcode(json.getString("place"));
             }catch (Exception ex){
                 System.out.println(ex.getMessage());
             }
-//            address.setSuburb(json.getString("village"));
         }
         return address;
     }
