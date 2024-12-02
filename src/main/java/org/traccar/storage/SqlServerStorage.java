@@ -1,43 +1,24 @@
-/*
- * Copyright 2022 Anton Tananaev (anton@traccar.org)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.traccar.storage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.poi.ss.formula.functions.T;
+import jakarta.inject.Inject;
 import org.traccar.config.Config;
-import org.traccar.helper.Log;
+import org.traccar.config.Keys;
 import org.traccar.model.*;
 import org.traccar.storage.query.Columns;
 import org.traccar.storage.query.Condition;
 import org.traccar.storage.query.Order;
 import org.traccar.storage.query.Request;
 
-import jakarta.inject.Inject;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class DatabaseStorage extends Storage {
+public class SqlServerStorage extends Storage{
 
     protected final Config config;
     protected final DataSource dataSource;
@@ -45,7 +26,7 @@ public class DatabaseStorage extends Storage {
     private final String databaseType;
 
     @Inject
-    public DatabaseStorage(Config config, DataSource dataSource, ObjectMapper objectMapper) {
+    public SqlServerStorage(Config config, DataSource dataSource, ObjectMapper objectMapper) {
         this.config = config;
         this.dataSource = dataSource;
         this.objectMapper = objectMapper;
@@ -81,6 +62,10 @@ public class DatabaseStorage extends Storage {
 
     @Override
     public <T> long addObject(T entity, Request request) throws StorageException {
+        if(entity instanceof Position){
+            String query =config.getString(Keys.INSERT_POSITION_QUERY);
+            executeStoreProducer(entity,query);
+        }
         List<String> columns = request.getColumns().getColumns(entity.getClass(), "get");
         StringBuilder query = new StringBuilder("INSERT INTO ");
         query.append(getStorageName(entity.getClass()));
@@ -397,6 +382,30 @@ public class DatabaseStorage extends Storage {
         return result.toString();
     }
 
-    
+    private void executeStoreProducer(Object entity, String query) {
+        try {
+            List<String> columns =extractParameters(query);
+            QueryBuilder builder = QueryBuilder.create(config, dataSource, objectMapper, query);
+            builder.setObject(entity,columns);
+            builder.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    private List<String> extractParameters(String query) {
+        List<String> parameters = new ArrayList<>();
+
+        // Regular expression to find parameters in the format :parameterName
+        String regex = ":(\\w+)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(query);
+
+        // Add each parameter name to the list
+        while (matcher.find()) {
+            parameters.add(matcher.group(1));
+        }
+
+        return parameters;
+    }
 }

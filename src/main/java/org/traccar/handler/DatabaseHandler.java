@@ -44,11 +44,8 @@ public class DatabaseHandler extends BasePositionHandler {
 
     @Override
     public void onPosition(Position position, Callback callback) {
-
         try {
             position.setId(storage.addObject(position, new Request(new Columns.Exclude("id"))));
-            String query =config.getString(Keys.INSERT_POSITION_QUERY);
-            storage.executeStoreProducer(position,query);
             statisticsManager.registerMessageStored(position.getDeviceId(), position.getProtocol());
         } catch (Exception error) {
             LOGGER.warn("Failed to store position", error);

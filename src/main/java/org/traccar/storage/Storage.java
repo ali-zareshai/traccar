@@ -41,8 +41,6 @@ public abstract class Storage {
 
     public abstract void removePermission(Permission permission) throws StorageException;
 
-    public abstract void executeStoreProducer(Position entity, String query);
-
     public List<Permission> getPermissions(
             Class<? extends BaseModel> ownerClass,
             Class<? extends BaseModel> propertyClass) throws StorageException {

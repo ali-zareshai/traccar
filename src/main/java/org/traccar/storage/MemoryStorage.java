@@ -184,9 +184,5 @@ public class MemoryStorage extends Storage {
                 .remove(new Pair<>(permission.getOwnerId(), permission.getPropertyId()));
     }
 
-    @Override
-    public void executeStoreProducer(Position entity, String query) {
-
-    }
 
 }
